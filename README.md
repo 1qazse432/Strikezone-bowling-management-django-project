@@ -50,47 +50,13 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### 3. Configure optional environment variables
-
-No external service credentials are required for local testing. The application uses a local SQLite database (`db.sqlite3`) and does not need a database username or password.
-
-The variables below are optional for local development. They may be set in the shell; no `.env` loader is required.
-
-| Variable               | Default                          | Purpose |
-|------------------------|----------------------------------|---------|
-| `DJANGO_SECRET_KEY`    | A development-only fallback key  | Set a private random key for a deployment or shared environment. |
-| `DJANGO_DEBUG`         | `False`                          | Set to `True` during local development to display Django debug details. Leave disabled when testing the custom 404 page. |
-| `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1,testserver` | Comma-separated hostnames accepted by Django. |
-
-An illustrative `.env.example` is included, but Django does not automatically read `.env` files. Export the variables using your operating system's shell.
-
-For example:
-
-**macOS/Linux**:
-
-```bash
-export DJANGO_SECRET_KEY="use-a-long-random-local-key"
-export DJANGO_DEBUG="True"
-export DJANGO_ALLOWED_HOSTS="localhost,127.0.0.1"
-```
-
-**Windows PowerShell**:
-
-```powershell
-$env:DJANGO_SECRET_KEY = "use-a-long-random-local-key"
-$env:DJANGO_DEBUG = "True"
-$env:DJANGO_ALLOWED_HOSTS = "localhost,127.0.0.1"
-```
-
-The fallback secret is intended for local evaluation only; replace it for any deployment. No login, logout, registration, or user management flow is implemented.
-
-### 4. Apply migrations
+### 3. Apply migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 5. Run the development server
+### 4. Run the development server
 
 ```bash
 python manage.py runserver
@@ -147,5 +113,4 @@ python manage.py test
 ```
 
 The tests cover public page access, core form validation, lane-number uniqueness, unavailable-lane scheduling restrictions, score bounds, duplicate score prevention, and game detail navigation.
-# Strikezone-bowling-management-django-project
 # Strikezone-bowling-management-django-project
