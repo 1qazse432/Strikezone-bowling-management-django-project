@@ -4,24 +4,25 @@ StrikeZone is a Django web application for managing bowling centers, lanes, bowl
 
 ## Features
 
-1- Center and lane directory with availability and relationship-aware deletion checks.
-2- Bowler profiles with automatically calculated averages based on recorded scores, plus search and average-based sorting.
-3- Game scheduling, status filters, and detail pages.
-4- Per-game bowler score entry, score editing, score deletion, and scoreboard ranking.
-5- Responsive Bootstrap layout using locally bundled assets, a comprehensive CRUD-aware footer with links to all available record pages, reusable template partials, custom template filters/tags, and a custom 404 page.
-6- SQLite by default; migrations create schema only and do not insert sample data.
+1- Center and lane directory with availability and relationship-aware deletion checks.<br />
+2- Bowler profiles with automatically calculated averages based on recorded scores, plus search and average-based sorting.<br />
+3- Game scheduling, status filters, and detail pages.<br />
+4- Per-game bowler score entry, score editing, score deletion, and scoreboard ranking.<br />
+5- Responsive Bootstrap layout using locally bundled assets, a comprehensive CRUD-aware footer with links to all available record pages, reusable template partials, custom template filters/tags, and a custom 404 page.<br />
+6- SQLite by default; migrations create schema only and do not insert sample data.<br />
 
 ## Languages used
 
 - Python 3.12 or newer
-- Django 6.1.2 (latest stable release at the time this project was assembled as was required for the prohect)
+- Django 6.1.2 (latest stable release at the time this project was assembled as was required for the project)
 - SQLite
 - Bootstrap 5.3.6 bundled locally under `static/vendor/bootstrap/` (no network required for framework CSS or JavaScript)
 
 
 ### Player scoring averages
 
-A bowler's average is calculated automatically from all of that bowler's recorded game scores. It updates when a score is created, edited, or deleted. Players with no recorded scores display an em dash, and the average is not manually editable. Apply the included migration with `python manage.py migrate`.
+A bowler's average is calculated automatically from all of that bowler's recorded game scores. It updates when a score is created, edited, or deleted. Players with no recorded scores display an em dash, and the average is not manually editable. 
+Apply the included migration with `python manage.py migrate`.
 
 ## Installation and local run
 
@@ -68,12 +69,12 @@ Open <http://127.0.0.1:8000/>. When `DJANGO_DEBUG=False`, the custom 404 page is
 
 The database starts empty by design. All required objects can be created through the site's navigation; the Django admin is not required.
 
-1. Open **Centers → Add center** and create a bowling center.
-2. Open **Lanes → Add lane** and assign it to the center.
-3. Open **Bowlers → Add bowler** and create at least two profiles.
-4. Open **Games → Schedule game** and assign a lane, date/time, and status.
-5. Open the game's detail page and use **Record participant score** for each bowler.
-6. Open **Scoreboard** to sort, search, edit, or remove score records.
+1. Open **Centers → Add center** and create a bowling center.<br />
+2. Open **Lanes → Add lane** and assign it to the center.<br />
+3. Open **Bowlers → Add bowler** and create at least two profiles.<br />
+4. Open **Games → Schedule game** and assign a lane, date/time, and status.<br />
+5. Open the game's detail page and use **Record participant score** for each bowler.<br />
+6. Open **Scoreboard** to sort, search, edit, or remove score records.<br />
 
 The UI provides navigation to every model: centers, lanes, bowlers, games, and game-score records. No admin or authentication interface is part of the required workflow. Lanes cannot be deleted while games reference them; centers cannot be deleted while lanes remain; bowlers with recorded scores cannot be deleted. These protections avoid broken relational data and return user-facing messages.
 
