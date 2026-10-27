@@ -11,7 +11,7 @@ StrikeZone is a Django web application for managing bowling centers, lanes, bowl
 5- Responsive Bootstrap layout using locally bundled assets, a comprehensive CRUD-aware footer with links to all available record pages, reusable template partials, custom template filters/tags, and a custom 404 page.
 6- SQLite by default; migrations create schema only and do not insert sample data.
 
-## Langueges used
+## Languages used
 
 - Python 3.12 or newer
 - Django 6.1.2 (latest stable release at the time this project was assembled as was required for the prohect)
