@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Edit center{% else %}Add center{% endif %}{% endblock %}
+{% block content %}
+<nav class="breadcrumb-wrap" aria-label="Breadcrumb"><a href="{% url 'centers:center_list' %}">Centers</a><span>/</span><span>{% if object %}Edit{% else %}New center{% endif %}</span></nav>
+<div class="form-layout"><div class="form-intro"><div class="eyebrow">VENUE SETUP</div><h1>{% if object %}Update center details{% else %}Add a bowling center{% endif %}</h1><p>Maintain accurate venue and contact information. Once saved, you can register lanes and schedule games at this center.</p><div class="form-note"><strong>Required fields</strong><p class="mb-0">Center name, street address, and city are required.</p></div></div><div class="form-panel"><form method="post" novalidate>{% csrf_token %}{% include 'partials/_form_fields.html' %}<div class="d-flex flex-wrap gap-2 mt-4"><button class="btn btn-amber" type="submit">Save center</button><a class="btn btn-outline-secondary" href="{% if object %}{% url 'centers:center_detail' object.pk %}{% else %}{% url 'centers:center_list' %}{% endif %}">Cancel</a></div></form></div></div>
+{% endblock %}

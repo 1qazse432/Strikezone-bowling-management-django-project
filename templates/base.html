@@ -1,0 +1,142 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="StrikeZone bowling center, player, game and score management.">
+  <title>{% block title %}StrikeZone{% endblock %} · Bowling Manager</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <nav class="navbar navbar-expand-lg navbar-dark site-nav">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}"><span class="brand-ball">●</span><span>STRIKE<span class="brand-accent">ZONE</span></span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="{% url 'centers:center_list' %}">Centers</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'games:lane_list' %}">Lanes</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'players:bowler_list' %}">Bowlers</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'games:game_list' %}">Games</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'games:score_list' %}">Scoreboard</a></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-amber btn-sm px-3" href="{% url 'games:game_create' %}">+ Schedule game</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" class="container page-shell">
+    {% include 'partials/_messages.html' %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer mt-5" aria-label="Site footer navigation">
+    <div class="container py-5">
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-2">
+          <a class="footer-brand d-inline-block mb-2" href="{% url 'home' %}">STRIKEZONE</a>
+          <p class="footer-description">Bowling operations, made simple.</p>
+          <small class="footer-meta">Built with Django and Bootstrap.</small>
+        </div>
+
+        <nav class="col-6 col-md-6 col-xl-2" aria-label="General pages">
+          <h2 class="footer-heading">General</h2>
+          <ul class="footer-links">
+            <li><a href="{% url 'home' %}">Dashboard</a></li>
+            <li><a href="{% url 'centers:center_list' %}">All centers</a></li>
+            <li><a href="{% url 'centers:center_create' %}">Add center</a></li>
+            <li><a href="{% url 'games:lane_list' %}">All lanes</a></li>
+            <li><a href="{% url 'games:lane_create' %}">Add lane</a></li>
+            <li><a href="{% url 'players:bowler_list' %}">All bowlers</a></li>
+            <li><a href="{% url 'players:bowler_create' %}">Add bowler</a></li>
+            <li><a href="{% url 'games:game_list' %}">All games</a></li>
+            <li><a href="{% url 'games:game_create' %}">Schedule a game</a></li>
+            <li><a href="{% url 'games:score_list' %}">Scoreboard</a></li>
+            <li><a href="{% url 'games:score_create' %}">Add a score</a></li>
+          </ul>
+        </nav>
+
+        <nav class="col-6 col-md-6 col-xl-2" aria-label="Bowling center pages">
+          <h2 class="footer-heading">Centers</h2>
+          <ul class="footer-links">
+            {% for center in footer_centers %}
+              <li class="footer-record">
+                <a href="{% url 'centers:center_detail' center.pk %}">{{ center.name }}</a>
+                <span class="footer-record-actions"><a href="{% url 'centers:center_update' center.pk %}">Edit</a> · <a href="{% url 'centers:center_delete' center.pk %}">Delete</a></span>
+              </li>
+            {% empty %}
+              <li class="footer-muted">No centers created yet.</li>
+            {% endfor %}
+          </ul>
+        </nav>
+
+        <nav class="col-6 col-md-6 col-xl-2" aria-label="Bowling lane pages">
+          <h2 class="footer-heading">Lanes</h2>
+          <ul class="footer-links">
+            {% for lane in footer_lanes %}
+              <li class="footer-record">
+                <a href="{% url 'games:lane_detail' lane.pk %}">{{ lane.center.name }} · Lane {{ lane.number }}</a>
+                <span class="footer-record-actions"><a href="{% url 'games:lane_update' lane.pk %}">Edit</a> · <a href="{% url 'games:lane_delete' lane.pk %}">Delete</a></span>
+              </li>
+            {% empty %}
+              <li class="footer-muted">No lanes created yet.</li>
+            {% endfor %}
+          </ul>
+        </nav>
+
+        <nav class="col-6 col-md-6 col-xl-2" aria-label="Bowler and game pages">
+          <h2 class="footer-heading">Bowlers</h2>
+          <ul class="footer-links">
+            {% for bowler in footer_bowlers %}
+              <li class="footer-record">
+                <a href="{% url 'players:bowler_detail' bowler.pk %}">{{ bowler.first_name }} {{ bowler.last_name }}</a>
+                <span class="footer-record-actions"><a href="{% url 'players:bowler_update' bowler.pk %}">Edit</a> · <a href="{% url 'players:bowler_delete' bowler.pk %}">Delete</a></span>
+              </li>
+            {% empty %}
+              <li class="footer-muted">No bowlers created yet.</li>
+            {% endfor %}
+          </ul>
+          <h2 class="footer-heading footer-heading-spaced">Games</h2>
+          <ul class="footer-links">
+            {% for game in footer_games %}
+              <li class="footer-record">
+                <a href="{% url 'games:game_detail' game.pk %}">{{ game.title }}</a>
+                <span class="footer-record-actions"><a href="{% url 'games:game_update' game.pk %}">Edit</a> · <a href="{% url 'games:game_delete' game.pk %}">Delete</a> · <a href="{% url 'games:score_create_for_game' game.pk %}">Add score</a></span>
+              </li>
+            {% empty %}
+              <li class="footer-muted">No games scheduled yet.</li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-score-links mt-4 pt-3">
+        <h2 class="footer-heading">Score record pages</h2>
+        <div class="row g-3">
+          {% for score in footer_scores %}
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div class="footer-score-item">
+                <a href="{% url 'games:score_update' score.pk %}">{{ score.bowler.first_name }} {{ score.bowler.last_name }} · {{ score.score }} points</a>
+                <span><a href="{% url 'games:score_update' score.pk %}">Edit</a> · <a href="{% url 'games:score_delete' score.pk %}">Delete</a> <span class="footer-separator">/</span> {{ score.game.title }}</span>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12"><p class="footer-muted mb-0">Score edit and delete links will appear here when score records exist.</p></div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="footer-bottom mt-4 pt-3 d-flex flex-column flex-md-row justify-content-between gap-2">
+        <span>© {% now "Y" %} StrikeZone Bowling Manager</span>
+        <span>Every section is available from this footer or the main navigation.</span>
+      </div>
+    </div>
+  </footer>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

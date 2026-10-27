@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Bowling centers{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">VENUE DIRECTORY</div><h1>Bowling centers</h1><p>Manage venue details and navigate to each center's lanes.</p></div><a class="btn btn-amber align-self-start" href="{% url 'centers:center_create' %}">+ Add center</a></div>
+{% if centers %}<div class="row g-3">
+  {% for center in centers %}<div class="col-md-6 col-xl-4"><article class="data-card h-100"><div class="card-topline"><span class="tag-label">{{ center.city }}</span><span class="muted-code">CTR-{{ center.pk|stringformat:'04d' }}</span></div><h2 class="h4"><a class="plain-card-link" href="{% url 'centers:center_detail' center.pk %}">{{ center.name }}</a></h2><p class="text-secondary small mb-3">{{ center.address }}</p><div class="metric-strip"><span><strong>{{ center.lane_count }}</strong> lanes registered</span></div><p class="small text-secondary mt-3 mb-0">{% if center.phone %}{{ center.phone }}{% else %}No phone listed{% endif %}</p><div class="card-actions"><a href="{% url 'centers:center_detail' center.pk %}">View center →</a><a href="{% url 'centers:center_update' center.pk %}">Edit</a></div></article></div>{% endfor %}
+</div>{% include 'partials/_pagination.html' %}{% else %}{% include 'partials/_empty_state.html' with title="No centers registered" message="Create the first bowling center to start configuring lanes." action_url="/centers/new/" action_label="Add first center" %}{% endif %}
+{% endblock %}

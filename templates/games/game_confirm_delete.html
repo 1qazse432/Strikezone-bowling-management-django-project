@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Delete game{% endblock %}
+{% block content %}<div class="confirm-wrap"><div class="confirm-icon">!</div><div class="eyebrow">CONFIRM DELETION</div><h1>Delete this game?</h1><p>This deletes <strong>{{ object.title }}</strong> and all its score records. This action cannot be undone.</p><div class="confirm-summary"><strong>{{ object.title }}</strong><span>{{ object.lane.center.name }} · Lane {{ object.lane.number }} · {{ object.scheduled_at|date:"d M Y · H:i" }}</span></div><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Delete game and scores</button> <a class="btn btn-outline-secondary" href="{% url 'games:game_detail' object.pk %}">Cancel</a></form></div>{% endblock %}

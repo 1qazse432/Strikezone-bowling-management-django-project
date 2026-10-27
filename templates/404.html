@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Page not found{% endblock %}
+{% block content %}<section class="not-found"><div class="not-found-number">404</div><div class="eyebrow">OUT OF BOUNDS</div><h1>This page is off the lane.</h1><p>The address may be incorrect, or the record may have been removed.</p><a class="btn btn-amber" href="{% url 'home' %}">Return to dashboard</a><a class="btn btn-outline-secondary" href="{% url 'games:game_list' %}">Browse games</a></section>{% endblock %}

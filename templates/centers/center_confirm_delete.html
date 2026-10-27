@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Delete center{% endblock %}
+{% block content %}<div class="confirm-wrap"><div class="confirm-icon">!</div><div class="eyebrow">CONFIRM DELETION</div><h1>Delete {{ object.name }}?</h1><p>This action cannot be undone. A center with registered lanes cannot be deleted; remove its lanes first.</p><div class="confirm-summary"><strong>{{ object.name }}</strong><span>{{ object.city }} · {{ object.lanes.count }} lane{{ object.lanes.count|pluralize }}</span></div><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Delete center</button> <a class="btn btn-outline-secondary" href="{% url 'centers:center_detail' object.pk %}">Cancel</a></form></div>{% endblock %}

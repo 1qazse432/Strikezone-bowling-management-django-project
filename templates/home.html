@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load bowling_tags %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="hero-panel mb-4">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-line"></span> BOWLING OPERATIONS</div>
+    <h1>Every frame.<br><span>One clear view.</span></h1>
+    <p>Manage centers, lanes, bowlers, games and scores in one focused workspace.</p>
+    <div class="d-flex flex-wrap gap-2 mt-4"><a href="{% url 'games:game_create' %}" class="btn btn-amber btn-lg">Schedule a game <span aria-hidden="true">↗</span></a><a href="{% url 'centers:center_create' %}" class="btn btn-outline-light btn-lg">Add a center</a></div>
+  </div>
+  <div class="hero-art" aria-hidden="true"><div class="hero-ball"><span></span><span></span><span></span></div><div class="pin pin-one"></div><div class="pin pin-two"></div><div class="lane-stripes"></div><div class="hero-score">300 <small>PERFECT GAME</small></div></div>
+</section>
+<section class="stats-grid mb-5" aria-label="Database totals">
+  <a class="stat-card" href="{% url 'centers:center_list' %}"><span class="stat-icon">⌂</span><span class="stat-label">Centers</span><strong>{{ center_count }}</strong><small>Bowling locations</small></a>
+  <a class="stat-card" href="{% url 'games:lane_list' %}"><span class="stat-icon">▤</span><span class="stat-label">Lanes</span><strong>{{ lane_count }}</strong><small>Available and closed</small></a>
+  <a class="stat-card" href="{% url 'players:bowler_list' %}"><span class="stat-icon">◎</span><span class="stat-label">Bowlers</span><strong>{{ bowler_count }}</strong><small>Player profiles</small></a>
+  <a class="stat-card" href="{% url 'games:game_list' %}"><span class="stat-icon">◷</span><span class="stat-label">Games</span><strong>{{ game_count }}</strong><small>Scheduled and played</small></a>
+  <a class="stat-card" href="{% url 'games:score_list' %}"><span class="stat-icon">↗</span><span class="stat-label">Scores</span><strong>{{ score_count }}</strong><small>Recorded results</small></a>
+</section>
+<div class="section-heading mb-3"><div><div class="eyebrow">UP NEXT</div><h2>Upcoming games</h2></div><a class="text-link" href="{% url 'games:game_list' %}">View all games ↗</a></div>
+{% if upcoming_games %}
+  <div class="row g-3 mb-5">
+  {% for game in upcoming_games %}
+    <div class="col-12 col-md-6 col-xl-4"><a class="data-card game-card h-100" href="{% url 'games:game_detail' game.pk %}"><div class="card-topline"><span class="status-pill status-{{ game.status }}">{{ game.get_status_display }}</span><span class="muted-code">GAME-{{ game.pk|stringformat:'04d' }}</span></div><h3>{{ game.title }}</h3><p class="mb-1">{{ game.lane.center.name }} · Lane {{ game.lane.number }}</p><div class="card-date">{{ game.scheduled_at|date:"D, d M Y · H:i" }}</div><div class="card-footer-line">{{ game.participant_total }} participant{{ game.participant_count|pluralize }} <span>→</span></div></a></div>
+  {% endfor %}
+  </div>
+{% else %}
+  <div class="surface-panel mb-5">{% include 'partials/_empty_state.html' with title="No games scheduled" message="Create a center and lane, then schedule the first game from here." action_url="/games/new/" action_label="Schedule first game" %}</div>
+{% endif %}
+<div class="row g-4 mb-4">
+  <div class="col-lg-7"><div class="surface-panel h-100"><div class="section-heading mb-3"><div><div class="eyebrow">RESULTS</div><h2>Latest scores</h2></div><a href="{% url 'games:score_list' %}" class="text-link">Scoreboard ↗</a></div>
+    {% if recent_scores %}<div class="list-group list-group-flush">
+      {% for score in recent_scores %}<a class="result-row list-group-item list-group-item-action" href="{% url 'games:game_detail' score.game_id %}"><span class="avatar-mark">{{ score.bowler.full_name|initials }}</span><span class="result-player"><strong>{{ score.bowler.full_name }}</strong><small>{{ score.game.title }}</small></span><span class="result-score">{{ score.score }}<small>{{ score.score|score_band }}</small></span></a>{% endfor %}
+    </div>{% else %}<p class="text-secondary mb-0">No scores recorded yet. Open a game to add its first result.</p>{% endif %}
+  </div></div>
+  <div class="col-lg-5"><div class="surface-panel h-100"><div class="eyebrow">VENUE OVERVIEW</div><h2 class="mb-3">Centers to explore</h2>
+    {% if popular_centers %}{% for center in popular_centers %}<a class="center-mini-row" href="{% url 'centers:center_detail' center.pk %}"><span class="center-mini-icon">⌂</span><span><strong>{{ center.name }}</strong><small>{{ center.city }}</small></span><span class="mini-count">{{ center.lane_count }} lanes</span></a>{% endfor %}{% else %}<p class="text-secondary">No centers yet. Start with a venue record, then add lanes.</p><a href="{% url 'centers:center_create' %}" class="btn btn-outline-dark btn-sm">Create a center</a>{% endif %}
+  </div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+<div class="empty-state text-center py-5">
+  <div class="empty-icon" aria-hidden="true">🎳</div>
+  <h2 class="h5">{{ title|default:"Nothing to display yet" }}</h2>
+  <p class="text-secondary mb-3">{{ message|default:"Create a record to begin building your bowling workspace." }}</p>
+  {% if action_url and action_label %}<a class="btn btn-amber" href="{{ action_url }}">{{ action_label }}</a>{% endif %}
+</div>
