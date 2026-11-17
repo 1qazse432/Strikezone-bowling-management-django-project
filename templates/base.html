@@ -23,6 +23,7 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'players:bowler_list' %}">Bowlers</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'games:game_list' %}">Games</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'games:score_list' %}">Scoreboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'games:analytics' %}">Insights</a></li>
           <li class="nav-item ms-lg-2"><a class="btn btn-amber btn-sm px-3" href="{% url 'games:game_create' %}">+ Schedule game</a></li>
         </ul>
       </div>
@@ -57,6 +58,7 @@
             <li><a href="{% url 'games:game_create' %}">Schedule a game</a></li>
             <li><a href="{% url 'games:score_list' %}">Scoreboard</a></li>
             <li><a href="{% url 'games:score_create' %}">Add a score</a></li>
+            <li><a href="{% url 'games:analytics' %}">Performance insights</a></li>
           </ul>
         </nav>
 

@@ -13,7 +13,7 @@ class BowlingGameForm(BootstrapFormMixin, forms.ModelForm):
     )
     class Meta:
         model = BowlingGame
-        fields = ("title", "lane", "scheduled_at", "status", "notes")
+        fields = ("title", "lane", "scheduled_at", "status", "notes", "scoring_guidance")
         labels = {"title": "Game title", "lane": "Lane", "scheduled_at": "Scheduled date and time", "status": "Game status", "notes": "Notes"}
         help_texts = {"lane": "Only existing lanes can be assigned to a game.", "notes": "Optional; maximum 500 characters."}
         widgets = {

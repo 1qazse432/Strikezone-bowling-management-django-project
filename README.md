@@ -1,34 +1,41 @@
-# StrikeZone — Bowling Management
+# StrikeZone — Bowling Management Platform
 
-StrikeZone is a Django web application for managing bowling centers, lanes, bowlers, scheduled games, and participant scores. The interface uses Bootstrap and Django templates. Authentication and user-facing account features are intentionally excluded.
+StrikeZone is a Django application for managing bowling centers, lanes, bowlers, games, and game scores. It provides operational CRUD workflows, a searchable scoreboard, performance analytics, and CSV exports. The interface uses Django templates and locally bundled Bootstrap assets.
 
-## Features
+## Main capabilities
 
-1- Center and lane directory with availability and relationship-aware deletion checks.<br />
-2- Bowler profiles with automatically calculated averages based on recorded scores, plus search and average-based sorting.<br />
-3- Game scheduling, status filters, and detail pages.<br />
-4- Per-game bowler score entry, score editing, score deletion, and scoreboard ranking.<br />
-5- Responsive Bootstrap layout using locally bundled assets, a comprehensive CRUD-aware footer with links to all available record pages, reusable template partials, custom template filters/tags, and a custom 404 page.<br />
-6- SQLite by default; migrations create schema only and do not insert sample data.<br />
+- **Centers and lanes:** maintain venue details, lane surfaces, and lane availability. Lane numbers are unique within each center.
+- **Bowler profiles:** maintain player profiles and calculate each bowler's average directly from recorded scores.
+- **Game scheduling:** schedule games, assign available lanes, update statuses, and record participant results.
+- **Scoreboard:** search, filter, sort, edit, and delete game scores. Duplicate bowler entries within a game are prevented.
+- **Performance insights:** review score distribution, monthly activity, player rankings, center comparisons, and perfect games.
+- **CSV export:** download the current scoreboard search as a spreadsheet-compatible CSV. Text cells are protected against spreadsheet formula injection.
+- **Responsive interface:** Bootstrap 5.3.6, shared navigation, a comprehensive footer, reusable template partials, custom template tags and filters, and a custom 404 page.
 
-## Languages used
+The project uses three Django apps with separate responsibilities:
+
+| App       | Responsibility |
+|-----------|---|
+| `centers` | Bowling centers and lanes |
+| `players` | Bowler profiles and derived statistics |
+| `games`   | Games, score records, scoreboard, analytics, and exports |
+
+## Technology
 
 - Python 3.12 or newer
 - Django 6.1.2 (latest stable release at the time this project was assembled as was required for the project)
 - SQLite
-- Bootstrap 5.3.6 bundled locally under `static/vendor/bootstrap/` (no network required for framework CSS or JavaScript)
+- Bootstrap 5.3.6 (bundled locally; no CDN dependency)
 
+## Installation and startup
 
-### Player scoring averages
+The project starts with its default configuration. No source-code edits, environment variables, database credentials, or external service credentials are required for local evaluation.
 
-A bowler's average is calculated automatically from all of that bowler's recorded game scores. It updates when a score is created, edited, or deleted. Players with no recorded scores display an em dash, and the average is not manually editable. 
-Apply the included migration with `python manage.py migrate`.
+### 1. Extract the archive
 
-## Installation and local run
+Extract the project and open the `strikezone_project_fixed` directory, which contains `manage.py`.
 
-From the extracted project directory:
-
-### 1. Create and activate a virtual environment
+### 2. Create a virtual environment
 
 **macOS / Linux**
 
@@ -44,74 +51,129 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 2. Install dependencies
+### 3. Install dependencies
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### 3. Apply migrations
+### 4. Apply database migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 4. Run the development server
+The database is created automatically as `db.sqlite3`. Migrations create the database schema only; they do not insert example or prepopulated records.
+
+### 5. Start the application
 
 ```bash
 python manage.py runserver
 ```
 
-Open <http://127.0.0.1:8000/>. When `DJANGO_DEBUG=False`, the custom 404 page is used for missing routes. Bootstrap CSS and its JavaScript bundle are served from the project’s local `static/vendor/bootstrap/` directory, so layout, responsive navigation, forms, tables, buttons, and alerts work without external network access. `STATIC_URL` is configured as an absolute `/static/` path so assets load correctly on nested routes such as `/games/` and `/centers/1/`. A small local static-file route is included for the coursework evaluation workflow even when `DJANGO_DEBUG=False`; production deployments should serve static assets from a dedicated web server or static host.
+Open <http://127.0.0.1:8000/>.
 
-## Suggested evaluator workflow
+To run the automated test suite:
 
-The database starts empty by design. All required objects can be created through the site's navigation; the Django admin is not required.
+```bash
+python manage.py test
+```
 
-1. Open **Centers → Add center** and create a bowling center.<br />
-2. Open **Lanes → Add lane** and assign it to the center.<br />
-3. Open **Bowlers → Add bowler** and create at least two profiles.<br />
-4. Open **Games → Schedule game** and assign a lane, date/time, and status.<br />
-5. Open the game's detail page and use **Record participant score** for each bowler.<br />
-6. Open **Scoreboard** to sort, search, edit, or remove score records.<br />
+The project test suite contains 33 automated tests covering model validation, form behavior, empty-database workflows, navigation, CRUD routes, analytics, exports, and the custom 404 page.
 
-The UI provides navigation to every model: centers, lanes, bowlers, games, and game-score records. No admin or authentication interface is part of the required workflow. Lanes cannot be deleted while games reference them; centers cannot be deleted while lanes remain; bowlers with recorded scores cannot be deleted. These protections avoid broken relational data and return user-facing messages.
+## Configuration and environment variables
 
-## URL map
+The default local configuration uses SQLite, `DEBUG=False`, and the allowed hosts `localhost`, `127.0.0.1`, and `testserver`. No credentials are required.
 
-| Section               | Route |
-|-----------------------|-------|
+The following variables are optional. They are read directly from the process environment. The application does not load `.env` files automatically.
+
+| Variable               | Default                          | Purpose |
+|------------------------|----------------------------------|---|
+| `DJANGO_SECRET_KEY`    | Development-only fallback        | Use a private random value outside local evaluation. |
+| `DJANGO_DEBUG`         | `False`                          | Set to `True` for local debug output. Keep `False` to test the custom 404 page. |
+| `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1,testserver` | Comma-separated allowed hostnames. |
+
+`.env.example` documents the optional settings but is not required. Example shell configuration:
+
+**macOS / Linux**
+
+```bash
+export DJANGO_SECRET_KEY="replace-with-a-long-random-value"
+export DJANGO_DEBUG="True"
+export DJANGO_ALLOWED_HOSTS="localhost,127.0.0.1"
+```
+
+**Windows PowerShell**
+
+```powershell
+$env:DJANGO_SECRET_KEY = "replace-with-a-long-random-value"
+$env:DJANGO_DEBUG = "True"
+$env:DJANGO_ALLOWED_HOSTS = "localhost,127.0.0.1"
+```
+
+## Evaluator workflow
+
+The database is intentionally empty after migration. Create all records through the website; the Django admin and direct database editing are not part of the workflow.
+
+1. Open **Centers → Add center** and create a bowling center.
+2. Open **Lanes → Add lane** and assign one or more lanes to that center.
+3. Open **Bowlers → Add bowler** and create player profiles.
+4. Open **Games → Schedule game** and select an available lane.
+5. Open a game's detail page and select **Record participant score** for each bowler.
+6. Open **Scoreboard** to search, sort, edit, delete, or export results.
+7. Open **Insights** to review live performance statistics.
+
+The main navigation and shared footer connect the principal pages. Once records exist, the footer also provides links to their detail, edit, and delete-confirmation pages.
+
+## Data model
+
+| Model           | Main relationships |
+|-----------------|---|
+| `BowlingCenter` | One center has many lanes. |
+| `Lane`          | Each lane belongs to one center and can host many games. |
+| `Bowler`        | One bowler can have many score records. |
+| `BowlingGame`   | Each game uses one lane and has many score records. |
+| `GameScore`     | Each score connects one game and one bowler. |
+
+`BowlingGame` and `Bowler` have a many-to-many relationship through `GameScore`. The through model stores the score and optional result notes. A database uniqueness constraint permits only one score per bowler per game. Scores are limited to the ten-pin range of 0–300.
+
+## Validation and implementation notes
+
+- `config/forms.py` is included as a shared project module. All three apps import `BootstrapFormMixin` from `config.forms`; keep this file in the `config` package when copying or deploying the project.
+- Forms define labels, help text, placeholders, and user-friendly validation messages. The shared mixin adds Bootstrap classes and accessible help/error attributes.
+- Read-only or disabled fields are rendered on the lane and game forms to provide operational and scoring guidance. Derived bowler averages are not manually editable.
+- New games can only use available lanes. A lane cannot be deleted while referenced by a game; a center cannot be deleted while it has lanes; and a bowler cannot be deleted while score records reference them.
+- Successful create and update operations redirect to the relevant detail page. Deletion uses a confirmation page and relationship-aware checks.
+- The application uses class-based views, reusable form and view mixins, a service layer for analytics and score queries, ORM aggregation, database constraints, and exception handling for concurrent duplicate-score submissions.
+- All pages use the Django Template Engine, template inheritance, shared partials, built-in filters, and custom bowling template tags/filters.
+- Bootstrap assets are served locally from `static/vendor/bootstrap/`. The local static route supports the coursework evaluation setup with the default `DEBUG=False` configuration. A production deployment should serve static files through a dedicated web server or static host.
+
+## URL reference
+
+| Page                  | URL |
+|-----------------------|---|
 | Dashboard             | `/` |
 | Centers               | `/centers/` |
 | Lanes                 | `/lanes/` |
 | Bowlers               | `/players/` |
 | Games                 | `/games/` |
 | Scoreboard            | `/scores/` |
-| Record a score        | `/scores/new/` |
-| Custom not-found page | Handled by Django's `handler404` when `DEBUG=False` |
+| CSV export            | `/scores/export/` |
+| Performance insights  | `/insights/` |
+| Custom not-found page | Django 404 handler when `DEBUG=False` |
 
-The shared footer links to all primary list/create routes and, once records exist, includes direct detail, edit, delete-confirmation, and game-specific score-entry links for each applicable record. This makes record-specific pages available from every page without requiring manual URL entry.
+## Project structure
 
-## Data model
-
-- `BowlingCenter` has many `Lane` records (one-to-many).
-- `BowlingGame` references a `Lane` (many-to-one).
-- `BowlingGame` and `Bowler` have a many-to-many relationship through `GameScore`, which stores the numeric score and optional notes. Each bowler may have one score record per game; scores are validated between 0 and 300.
-
-## Validation and engineering notes
-
-Forms apply custom labels, help text, placeholders, Bootstrap widgets, and friendly validation messages. New games can only be assigned to lanes marked available; unavailable lanes are omitted from the scheduling choices and rejected by server-side form/model validation. Existing games may retain their current lane if it later becomes unavailable, but cannot be reassigned to an unavailable lane. Model validators and database constraints reinforce score bounds and uniqueness. A disabled, read-only guidance field is included on the lane and game forms, and the game-specific score form fixes the selected game. Successful writes redirect to the relevant detail page. Deletion requires a confirmation page.
-
-The codebase uses three Django apps with separated responsibilities: `centers`, `players`, and `games`. Class-based views, shared form styling, template inheritance, partial templates, explicit URL namespaces, database-aware querysets, and custom template filters/tags are used to keep responsibilities cohesive.
-
-## Tests
-
-Run the test suite with:
-
-```bash
-python manage.py test
+```text
+strikezone_project/
+├── config/                 # Settings, root URLs, shared forms, context processors
+├── centers/                # Bowling centers and lanes
+├── players/                # Bowler profiles
+├── games/                  # Games, scores, analytics, and exports
+├── templates/              # Base layout, app pages, and reusable partials
+├── static/                 # Site CSS and locally bundled Bootstrap
+├── manage.py
+├── requirements.txt
+└── README.md
 ```
-
-The tests cover public page access, core form validation, lane-number uniqueness, unavailable-lane scheduling restrictions, score bounds, duplicate score prevention, and game detail navigation.
-# Strikezone-bowling-management-django-project

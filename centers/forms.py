@@ -44,7 +44,7 @@ class LaneForm(BootstrapFormMixin, forms.ModelForm):
 
     class Meta:
         model = Lane
-        fields = ("center", "number", "surface", "is_available")
+        fields = ("center", "number", "surface", "is_available", "operational_note")
         labels = {"center": "Bowling center", "number": "Lane number", "surface": "Lane surface", "is_available": "Available for booking"}
         help_texts = {"is_available": "Uncheck if the lane is closed for maintenance."}
         widgets = {

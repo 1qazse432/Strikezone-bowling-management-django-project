@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load bowling_tags %}
+{% block title %}Performance insights{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <div class="eyebrow">PERFORMANCE INTELLIGENCE</div>
+    <h1>Insights</h1>
+    <p>Live statistics calculated from recorded games and scores.</p>
+  </div>
+  <a class="btn btn-outline-dark align-self-start" href="{% url 'games:score_export' %}">Export scoreboard</a>
+</div>
+
+<section class="stats-grid analytics-stats mb-4" aria-label="Performance summary">
+  <article class="stat-card"><span class="stat-label">Recorded scores</span><strong>{{ total_scores }}</strong><small>Across all games</small></article>
+  <article class="stat-card"><span class="stat-label">Average score</span><strong>{% if average_score != None %}{{ average_score|floatformat:1 }}{% else %}—{% endif %}</strong><small>All recorded results</small></article>
+  <article class="stat-card"><span class="stat-label">Highest score</span><strong>{% if highest_score != None %}{{ highest_score }}{% else %}—{% endif %}</strong><small>Maximum possible: 300</small></article>
+  <article class="stat-card"><span class="stat-label">Perfect games</span><strong>{{ perfect_games }}</strong><small>Scores of 300</small></article>
+  <article class="stat-card"><span class="stat-label">Active bowlers</span><strong>{{ active_bowlers }}</strong><small>With a recorded score</small></article>
+  <article class="stat-card"><span class="stat-label">Completed games</span><strong>{{ completed_games }}</strong><small>Of {{ total_games }} scheduled</small></article>
+</section>
+
+<div class="row g-4 mb-4">
+  <section class="col-lg-7">
+    <div class="analytics-panel h-100">
+      <div class="section-heading mb-3"><div><div class="eyebrow">RECENT ACTIVITY</div><h2>Monthly scoring volume</h2></div></div>
+      {% if monthly_activity %}
+        <div class="analytics-bars" role="list" aria-label="Scores recorded by month">
+          {% for month in monthly_activity %}
+            <div class="analytics-bar-row" role="listitem">
+              <span class="analytics-bar-label">{{ month.month|date:'M Y' }}</span>
+              <div class="analytics-bar-track"><span style="width: {{ month.bar_width }}%"></span></div>
+              <strong>{{ month.games_scored }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+        <p class="analytics-caption mb-0">Monthly totals are based on each game's scheduled date.</p>
+      {% else %}
+        <div class="empty-inline">Monthly trends will appear after scores have been recorded.</div>
+      {% endif %}
+    </div>
+  </section>
+  <section class="col-lg-5">
+    <div class="analytics-panel h-100">
+      <div class="section-heading mb-3"><div><div class="eyebrow">SCORE QUALITY</div><h2>Score distribution</h2></div></div>
+      {% for band in score_bands %}
+        <div class="distribution-row">
+          <div class="d-flex justify-content-between align-items-center mb-1"><span>{{ band.label }}</span><strong>{{ band.count }} <small>({{ band.percentage }}%)</small></strong></div>
+          <div class="distribution-track"><span class="distribution-{{ band.css_class }}" style="width: {{ band.percentage }}%"></span></div>
+        </div>
+      {% endfor %}
+      <p class="analytics-caption mb-0">Performance bands use the standard 0–300 scoring scale.</p>
+    </div>
+  </section>
+</div>
+
+<div class="row g-4 mb-4">
+  <section class="col-lg-7">
+    <div class="analytics-panel h-100">
+      <div class="section-heading mb-3"><div><div class="eyebrow">PLAYER RANKINGS</div><h2>Top bowlers by average</h2></div><a href="{% url 'players:bowler_list' %}?sort=average" class="text-link">View bowlers →</a></div>
+      {% if top_bowlers %}
+        <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Rank</th><th>Bowler</th><th>Games</th><th>Average</th><th>Best</th></tr></thead><tbody>
+        {% for bowler in top_bowlers %}
+          <tr><td><span class="rank-mark">{{ forloop.counter|stringformat:'02d' }}</span></td><td><a class="table-primary-link" href="{% url 'players:bowler_detail' bowler.pk %}">{{ bowler.full_name }}</a></td><td>{{ bowler.games_played }}</td><td><strong>{{ bowler.average|floatformat:1 }}</strong></td><td>{{ bowler.personal_best }}</td></tr>
+        {% endfor %}
+        </tbody></table></div>
+      {% else %}
+        <div class="empty-inline">Player rankings will appear after the first score is saved.</div>
+      {% endif %}
+    </div>
+  </section>
+  <section class="col-lg-5">
+    <div class="analytics-panel h-100">
+      <div class="section-heading mb-3"><div><div class="eyebrow">VENUE COMPARISON</div><h2>Center performance</h2></div></div>
+      {% if center_performance %}
+        <div class="center-performance-list">
+          {% for center in center_performance %}
+            <div class="center-performance-item">
+              <a class="table-primary-link" href="{% url 'centers:center_detail' center.pk %}">{{ center.name }}</a>
+              <div class="analytics-caption">{{ center.city }} · {{ center.lane_count }} lane{{ center.lane_count|pluralize }} · {{ center.game_count }} game{{ center.game_count|pluralize }}</div>
+              <strong>{% if center.average_score != None %}{{ center.average_score|floatformat:1 }} avg{% else %}No scores yet{% endif %}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-inline">Add a center and record games to compare venues.</div>
+      {% endif %}
+    </div>
+  </section>
+</div>
+
+<section class="analytics-panel mb-5">
+  <div class="section-heading mb-3"><div><div class="eyebrow">MILESTONE TRACKER</div><h2>Perfect games</h2></div></div>
+  {% if perfect_score_records %}
+    <div class="row g-3">
+      {% for record in perfect_score_records %}
+        <div class="col-md-6 col-xl-4"><div class="milestone-card"><span class="milestone-score">300</span><div><strong><a href="{% url 'players:bowler_detail' record.bowler_id %}">{{ record.bowler.full_name }}</a></strong><span>{{ record.game.title }}</span><small>{{ record.game.scheduled_at|date:'d M Y' }}</small></div></div></div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-inline">No perfect games have been recorded yet. The first 300-point result will appear here.</div>
+  {% endif %}
+</section>
+{% endblock %}

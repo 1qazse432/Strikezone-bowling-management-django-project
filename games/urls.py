@@ -1,6 +1,8 @@
 from django.urls import path
-from . import views
+
 from centers import views as center_views
+from . import views
+
 app_name = "games"
 urlpatterns = [
     path("lanes/", center_views.LaneListView.as_view(), name="lane_list"),
@@ -14,8 +16,10 @@ urlpatterns = [
     path("games/<int:pk>/edit/", views.GameUpdateView.as_view(), name="game_update"),
     path("games/<int:pk>/delete/", views.GameDeleteView.as_view(), name="game_delete"),
     path("scores/", views.GameScoreListView.as_view(), name="score_list"),
+    path("scores/export/", views.GameScoreExportView.as_view(), name="score_export"),
     path("scores/new/", views.GameScoreCreateView.as_view(), name="score_create"),
     path("games/<int:game_pk>/scores/new/", views.GameScoreCreateView.as_view(), name="score_create_for_game"),
     path("scores/<int:pk>/edit/", views.GameScoreUpdateView.as_view(), name="score_update"),
     path("scores/<int:pk>/delete/", views.GameScoreDeleteView.as_view(), name="score_delete"),
+    path("insights/", views.BowlingAnalyticsView.as_view(), name="analytics"),
 ]
